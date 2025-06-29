@@ -1,5 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+
+const calculateTotalQuantity = (items) => {
+    return items.reduce((total, item) => total + item.quantity, 0);
+};
+  
 export const CartSlice = createSlice({
   name: 'cart',
   initialState: {
@@ -18,12 +23,13 @@ export const CartSlice = createSlice({
             // if item doesn't exist in the cart, add new item to array via push
             state.items.push({name, image, cost, quantity: 1});
         }
-        state.cartofItems += 1;
+        state.cartofItems = calculateTotalQuantity(state.items);
     },
     removeItem: (state, action) => {
-        const {name, quantity} = action.payload;
+        const {name} = action.payload;
         state.items = state.items.filter(item => item.name !== name);
-        state.cartofItems -= quantity;
+
+        state.cartofItems = calculateTotalQuantity(state.items);
     },
     updateQuantity: (state, action) => {
         const {name, quantity} = action.payload;
@@ -31,18 +37,15 @@ export const CartSlice = createSlice({
 
         if (itemToUpdate !== -1){
             if (quantity > 0){
-                state.cartofItems += quantity - state.items[itemToUpdate].quantity;
-                state.items[itemToUpdate] = {
-                    ...state.items[itemToUpdate],
-                    quantity
-                };
+                state.items[itemToUpdate].quantity = quantity;
+            } else{
+                // if quantity reaches 0, remove item
+                state.items.splice(itemToUpdate, 1);
             }
-        }else{
-            // if quantity reaches 0, remove item
-            state.cartofItems -= state.items[itemToUpdate].quantity;
-            state.items.splice(itemToUpdate, 1);
         }
-    
+
+        state.cartofItems = calculateTotalQuantity(state.items);
+        
     },
   },
 });
