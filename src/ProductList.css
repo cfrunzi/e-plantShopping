@@ -111,6 +111,11 @@ body {
     background-color: #c0392b;
 }
 
+.product-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
 /* Pseudo-elements - Sale badge */
 .product-card::before {
     content: "SALE";
